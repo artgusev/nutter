@@ -1,10 +1,10 @@
 import setuptools
-import cli.nuttercli as nuttercli
+import cli.cli as cli
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-version = nuttercli.get_cli_version()
+version = cli.get_cli_version()
 
 def parse_requirements(filename):
     """Load requirements from a pip requirements file."""

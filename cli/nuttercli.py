@@ -8,6 +8,7 @@ import logging
 import os
 import datetime
 
+from .cli import get_cli_version
 import common.api as api
 from common.apiclient import DEFAULT_POLL_WAIT_TIME, InvalidConfigurationException, NotEnoughArguments
 from common.clustermanager import read_job_cluster_config
@@ -18,16 +19,6 @@ from .resultsvalidator import ExecutionResultsValidator
 from .reportsman import ReportWriters
 from . import reportsman as reports
 
-__version__ = '0.1.35'
-
-BUILD_NUMBER_ENV_VAR = 'NUTTER_BUILD_NUMBER'
-
-
-def get_cli_version():
-    build_number = os.environ.get(BUILD_NUMBER_ENV_VAR)
-    if build_number:
-        return '{}.{}'.format(__version__, build_number)
-    return __version__
 
 
 def get_cli_header():
