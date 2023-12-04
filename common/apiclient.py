@@ -56,13 +56,13 @@ class DatabricksAPIClient(object):
 
         return workspace_path_obj
 
-    def execute_notebook(self, notebook_path, cluster_id, timeout=120,
+    def execute_notebook(self, notebook_path, cluster_id=None, cluster_config=None, timeout=120,
                          pull_wait_time=DEFAULT_POLL_WAIT_TIME,
                          notebook_params=None):
         if not notebook_path:
             raise ValueError("empty path")
-        if not cluster_id:
-            raise ValueError("empty cluster id")
+        if not cluster_id and not cluster_config:
+            raise ValueError("cluster id or cluster config must be provided.")
         if timeout < self.min_timeout:
             raise ValueError(
                 "Timeout must be greater than {}".format(self.min_timeout))
@@ -74,12 +74,20 @@ class DatabricksAPIClient(object):
 
         name = str(uuid.uuid1())
         ntask = self.__get_notebook_task(notebook_path, notebook_params)
+        params = {
+            "run_name": name,
+            "notebook_task": ntask
+        }
 
-        runid = self._retrier.execute(self.inner_dbclient.jobs.submit_run,
-                                      run_name=name,
-                                      existing_cluster_id=cluster_id,
-                                      notebook_task=ntask,
-                                      )
+        if cluster_id:
+            params["existing_cluster_id"] = cluster_id
+        elif cluster_config:
+            params["new_cluster"] = cluster_config
+
+        runid = self._retrier.execute(
+            self.inner_dbclient.jobs.submit_run,
+            **params
+        )
 
         if 'run_id' not in runid:
             raise NotebookTaskRunIDMissingException
@@ -141,6 +149,8 @@ class NotebookTaskRunIDMissingException(Exception):
 class InvalidConfigurationException(Exception):
     pass
 
+class NotEnoughArguments(Exception):
+    pass
 
 class TimeOutException(Exception):
     pass
