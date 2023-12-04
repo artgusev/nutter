@@ -24,7 +24,8 @@ class HTTPRetrier(object):
                 logging.debug(
                     'Executing function with HTTP retry policy. Max tries:{}  delay:{}'
                     .format(self._max_retries, self._delay))
-
+                
+                logging.debug(kwargs)
                 return function(*args, **kwargs)
             except HTTPError as exc:
                 logging.debug("Error: {0}".format(str(exc)))
