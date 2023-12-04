@@ -21,8 +21,8 @@ class Scheduler(object):
         self._in_queue = Queue()
         self._out_queue = Queue()
 
-    def add_function(self, function, *args):
-        function_exec = FunctionToExecute(function, *args)
+    def add_function(self, function, **kwargs):
+        function_exec = FunctionToExecute(function, **kwargs)
         self._in_queue.put(function_exec)
 
     def run_and_wait(self):
@@ -124,12 +124,12 @@ class FunctionHandler(Worker):
 
 
 class FunctionToExecute(object):
-    def __init__(self, function, *args):
+    def __init__(self, function, **kwargs):
         self._function = function
-        self._args = args
+        self.kwargs = kwargs
 
     def execute(self):
-        return self._function(*self._args)
+        return self._function(**self.kwargs)
 
 
 class FunctionResult(object):
