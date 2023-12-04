@@ -54,9 +54,9 @@ class NutterCLI(object):
             logging.debug(""" Running tests. test_pattern: {} cluster_id: {}  notebook_params: {} timeout: {}
                                junit_report: {} max_parallel_tests: {}
                                tags_report: {}  recursive:{} cluster_conf_path: {} cluster_type: {}"""
-                          .format(test_pattern, cluster_id, timeout,
+                          .format(test_pattern, cluster_id, notebook_params, timeout,
                                   junit_report, max_parallel_tests,
-                                  tags_report, recursive, notebook_params, cluster_conf_path, cluster_type))
+                                  tags_report, recursive, cluster_conf_path, cluster_type))
 
             logging.debug("Executing test(s): {}".format(test_pattern))
 
@@ -65,8 +65,15 @@ class NutterCLI(object):
             if self._is_a_test_pattern(test_pattern):
                 logging.debug('Executing pattern')
                 results = self._nutter.run_tests(
-                    test_pattern, cluster_id, cluster_conf, timeout,
-                    max_parallel_tests, recursive, poll_wait_time, notebook_params)
+                    pattern=test_pattern,
+                    cluster_id=cluster_id,
+                    cluster_conf=cluster_conf,
+                    timeout=timeout,
+                    max_parallel_tests=max_parallel_tests,
+                    recursive=recursive,
+                    poll_wait_time=poll_wait_time,
+                    notebook_params=notebook_params
+                )
                 self._nutter.events_processor_wait()
                 self._handle_results(results, junit_report, tags_report)
                 return
