@@ -175,8 +175,15 @@ class Nutter(NutterApi):
                 NutterStatusEvents.TestScheduling, test_notebook.path)
             logging.debug(
                 'Scheduling execution of: {}'.format(test_notebook.path))
-            func_scheduler.add_function(self._execute_notebook,
-                                        test_notebook.path, cluster_id, cluster_conf, timeout, pull_wait_time, notebook_params)
+            func_scheduler.add_function(
+                self._execute_notebook,
+                test_notebook_path=test_notebook.path,
+                cluster_id=cluster_id,
+                cluster_conf=cluster_conf,
+                timeout=timeout,
+                pull_wait_time=pull_wait_time,
+                notebook_params=notebook_params
+            )
         return self._run_and_await(func_scheduler)
 
     def _execute_notebook(self, test_notebook_path, cluster_id, cluster_conf, timeout, pull_wait_time, notebook_params=None):
