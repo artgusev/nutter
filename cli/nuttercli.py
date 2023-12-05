@@ -46,21 +46,28 @@ class NutterCLI(object):
             timeout=120, junit_report=False,
             tags_report=False, max_parallel_tests=1,
             recursive=False, poll_wait_time=DEFAULT_POLL_WAIT_TIME, notebook_params=None,
-            cluster_conf_path: str = None, cluster_type: str = None):
+            cluster_conf_path: str = None, cluster_type: str = None, cluster_config: dict = None):
         try:
             if not bool(cluster_conf_path) and not bool(cluster_id):
                 raise NotEnoughArguments("cluster_conf_path or cluster_id must be provided")
 
             logging.debug(""" Running tests. test_pattern: {} cluster_id: {}  notebook_params: {} timeout: {}
                                junit_report: {} max_parallel_tests: {}
-                               tags_report: {}  recursive:{} cluster_conf_path: {} cluster_type: {}"""
+                               tags_report: {}  recursive:{} cluster_conf_path: {} cluster_type: {}
+                               cluster_config: {}"""
                           .format(test_pattern, cluster_id, notebook_params, timeout,
                                   junit_report, max_parallel_tests,
-                                  tags_report, recursive, cluster_conf_path, cluster_type))
+                                  tags_report, recursive, cluster_conf_path, cluster_type, cluster_config))
 
             logging.debug("Executing test(s): {}".format(test_pattern))
 
-            cluster_conf = read_job_cluster_config(cluster_conf_path, cluster_type)
+            if cluster_config is None:
+                if cluster_conf_path:
+                    cluster_conf = read_job_cluster_config(cluster_conf_path, cluster_type)
+                else:
+                    cluster_conf = None
+            else:
+                cluster_conf = cluster_config
 
             if self._is_a_test_pattern(test_pattern):
                 logging.debug('Executing pattern')
