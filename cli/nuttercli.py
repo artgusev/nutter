@@ -48,8 +48,8 @@ class NutterCLI(object):
             recursive=False, poll_wait_time=DEFAULT_POLL_WAIT_TIME, notebook_params=None,
             cluster_conf_path: str = None, cluster_type: str = None, cluster_config: dict = None):
         try:
-            if not bool(cluster_conf_path) and not bool(cluster_id):
-                raise NotEnoughArguments("cluster_conf_path or cluster_id must be provided")
+            if not bool(cluster_conf_path) and not bool(cluster_id) and not bool(cluster_config):
+                raise NotEnoughArguments("cluster_conf_path or cluster_id or cluster_config must be provided")
 
             logging.debug(""" Running tests. test_pattern: {} cluster_id: {}  notebook_params: {} timeout: {}
                                junit_report: {} max_parallel_tests: {}
